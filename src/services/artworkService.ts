@@ -1,11 +1,10 @@
-
 import type { Artwork } from '../types/artwork';
 
-const API_BASE_URL = 'http://localhost:3000';
+const ARTWORKS_URL = '/data/artworks.json';
 
-// HTTP Endpoint: GET /artworks
+// GET /data/artworks.json
 export async function fetchArtworks(): Promise<Artwork[]> {
-  const response = await fetch(`${API_BASE_URL}/artworks`);
+  const response = await fetch(ARTWORKS_URL);
 
   if (!response.ok) {
     throw new Error('เกิดข้อผิดพลาดในการดึงข้อมูลรายการผลงานศิลปะ');
@@ -14,13 +13,14 @@ export async function fetchArtworks(): Promise<Artwork[]> {
   return response.json();
 }
 
-// HTTP Endpoint: GET /artworks/:id
+// ไฟล์ static ไม่มี /:id จึงดึงทั้งรายการแล้วค้นหาด้วย id
 export async function fetchArtworkById(id: string): Promise<Artwork> {
-  const response = await fetch(`${API_BASE_URL}/artworks/${id}`);
+  const artworks = await fetchArtworks();
+  const artwork = artworks.find((item) => String(item.id) === String(id));
 
-  if (!response.ok) {
+  if (!artwork) {
     throw new Error(`ไม่พบข้อมูลผลงานรหัส ${id}`);
   }
 
-  return response.json();
+  return artwork;
 }
